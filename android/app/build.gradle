@@ -178,10 +178,10 @@ android {
 }
 
 dependencies {
-    compile project(':react-native-local-resource')
-    compile project(':react-native-config')
-    compile project(':react-native-splash-screen')
-    compile project(':react-native-firebase')
+    implementation project(':react-native-local-resource')
+    implementation project(':react-native-config')
+    implementation project(':react-native-splash-screen')
+    implementation project(':react-native-firebase')
     implementation project(':react-native-cardano')
     implementation project(':react-native-camera')
     implementation project(':react-native-randombytes')
@@ -194,8 +194,8 @@ dependencies {
     
     implementation project(':react-native-background-timer')
     implementation "com.google.android.gms:play-services-base:15.0.1"
-    implementation "com.google.firebase:firebase-core:16.0.1"
-    implementation "com.google.firebase:firebase-crash:16.0.1"
+    implementation "com.google.firebase:firebase-core:16.0.8"
+    implementation "com.google.firebase:firebase-crash:16.2.1"
     implementation('com.crashlytics.sdk.android:crashlytics:2.9.4@aar') {
         transitive = true
     }
