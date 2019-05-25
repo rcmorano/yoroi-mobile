@@ -6,6 +6,7 @@ before_cache:
 cache:
   directories:
     - ~/.npm # cache npm's cache
+    - ~/.nvm # cache npm's cache
     - ~/.cargo # cache cargo's cache
     - ~/.android-ndk
     - node_modules
@@ -58,7 +59,8 @@ before_install:
     then
       echo "dunno yet";
     fi;
-    nvm use $NODE_VERSION;
+    nvm install ${NODE_VERSION};
+    nvm use ${NODE_VERSION};
 
 
 install: 
