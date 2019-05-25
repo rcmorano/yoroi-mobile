@@ -33,21 +33,6 @@ env:
 
 before_install:
   - >
-    export ANDROID_NDK_HOME=${HOME}/.android-ndk/${ANDROID_NDK_VERSION};
-    export LOCAL_ANDROID_NDK_HOME="$ANDROID_NDK_HOME";
-    export LOCAL_ANDROID_NDK_HOST_PLATFORM="linux-x86_64";
-    export PATH=$PATH:${ANDROID_NDK_HOME};
-  - >
-    if [ ! -e "${ANDROID_NDK_HOME}" ];
-    then
-      wget https://dl.google.com/android/repository/android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip;
-      pwd; ls -hl;
-      rm -rf ~/.android-ndk; mkdir ~/.android-ndk;
-      unzip -qq android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip;
-      mv android-ndk-${ANDROID_NDK_VERSION} ${ANDROID_NDK_HOME};
-    fi
-  - >
-    set -x;
     if [ ! -e "$HOME/.cargo/bin" ];
     then
       curl https://sh.rustup.rs -sSf | sh -s -- -y;
@@ -55,11 +40,30 @@ before_install:
       rustup install ${RUST_VERSION};
       rustup target add wasm32-unknown-unknown --toolchain ${RUST_VERSION}
     fi;
+    if [ "$TRAVIS_OS_NAME" == "linux" ];
+    then
+      export ANDROID_NDK_HOME=${HOME}/.android-ndk/${ANDROID_NDK_VERSION};
+      export LOCAL_ANDROID_NDK_HOME="$ANDROID_NDK_HOME";
+      export LOCAL_ANDROID_NDK_HOST_PLATFORM="linux-x86_64";
+      export PATH=$PATH:${ANDROID_NDK_HOME};
+      if [ ! -e "${ANDROID_NDK_HOME}" ];
+      then
+        wget https://dl.google.com/android/repository/android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip;
+        pwd; ls -hl;
+        rm -rf ~/.android-ndk; mkdir ~/.android-ndk;
+        unzip -qq android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip;
+        mv android-ndk-${ANDROID_NDK_VERSION} ${ANDROID_NDK_HOME};
+      fi
+    fi;
+    if [ "$TRAVIS_OS_NAME" == "osx" ];
+    then
+      echo "dunno yet";
+    fi;
 
 
 install: 
   - >
-    npm install -g $YARN_VERSION;
+    npm install -g yarn@$YARN_VERSION;
     source $HOME/.cargo/env;
     rm package-lock.json;
     yarn add metro-core;
