@@ -61,6 +61,8 @@ before_install:
     fi;
     nvm install ${NODE_VERSION};
     nvm use ${NODE_VERSION};
+    yes | ${ANDROID_HOME}/tools/bin/sdkmanager --licenses;
+    gcc --version;
 
 
 install: 
