@@ -191,6 +191,12 @@ matrix:
       os: linux
       dist: xenial
       language: android
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-4.9
       android:
         components:
           - android-28
