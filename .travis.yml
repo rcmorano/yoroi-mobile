@@ -1,7 +1,5 @@
 sudo: true
 
-node_js: '10'
-
 before_cache:
   - rm -f  ~/.gradle/caches/modules-2/modules-2.lock
   - rm -rf ~/.gradle/caches/*/plugin-resolution/
@@ -188,12 +186,11 @@ matrix:
       os: linux
       dist: xenial
       language: android
+      node_js: '10'
       android:
         components:
-      #    - android-21
-      #    - build-tools-28.0.3
-          - build-tools-21.1.2
-          - android-21
+          - android-28
+          - build-tools-28.0.3
       #    - add-on
       #    - extra
         licenses:
