@@ -20,6 +20,7 @@ env:
   global:
     # runtime versions
     - RUST_VERSION=1.32.0
+    - NODE_VERSION=10
     - YARN_VERSION=1.15.2
     - ANDROID_NDK_VERSION=r17b
     # misc
@@ -57,6 +58,7 @@ before_install:
     then
       echo "dunno yet";
     fi;
+    nvm use $NODE_VERSION;
 
 
 install: 
@@ -186,7 +188,6 @@ matrix:
       os: linux
       dist: xenial
       language: android
-      node_js: '10'
       android:
         components:
           - android-28
