@@ -69,24 +69,9 @@ install:
     source $HOME/.cargo/env;
     rm -f package-lock.json;
     echo "scripts-prepend-node-path=true" >> .npmrc;
-    yarn add metro-core;
     yarn install;
     yarn setup_config;
     yarn android-bundle;
-    yarn run react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res;
-    rm -rf node_modules/react-native-cardano/rust/target;
-    curl -O https://s3.amazonaws.com/yoroi-backups/target.zip;
-    unzip -a target.zip -d node_modules/react-native-cardano/rust/;
-    if [ ! -d "node_modules/react-native/third-party" ];
-    then
-      cd node_modules/react-native;
-      ./scripts/ios-install-third-party.sh;
-      cd $OLDPWD;
-      cd node_modules/react-native/third-party/glog-0.3.5/;
-      make distclean;
-      ./configure;
-      cd $OLDPWD;
-    fi;
     echo "sdk.dir=${ANDROID_HOME}" >> android/local.properties;
     echo "MYAPP_RELEASE_STORE_PASSWORD=lalala" >> android/gradle.properties.local;
     echo "YAPP_RELEASE_KEY_PASSWORD=lalala" >> android/gradle.properties.local;
