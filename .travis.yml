@@ -42,7 +42,7 @@ before_install:
     fi;
     if [ "$TRAVIS_OS_NAME" == "linux" ];
     then
-      export ANDROID_NDK_HOME=${HOME}/.android-ndk/${ANDROID_NDK_VERSION};
+      export ANDROID_NDK_HOME=${HOME}/.android-ndk/android-ndk-${ANDROID_NDK_VERSION};
       export LOCAL_ANDROID_NDK_HOME="$ANDROID_NDK_HOME";
       export LOCAL_ANDROID_NDK_HOST_PLATFORM="linux-x86_64";
       export PATH=$PATH:${ANDROID_NDK_HOME};
@@ -50,9 +50,8 @@ before_install:
       then
         wget https://dl.google.com/android/repository/android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip;
         pwd; ls -hl;
-        rm -rf ~/.android-ndk; mkdir ~/.android-ndk;
-        unzip -qq android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip;
-        mv android-ndk-${ANDROID_NDK_VERSION} ${ANDROID_NDK_HOME};
+        rm -rf ~/.android-ndk; mkdir -p ~/.android-ndk;
+        unzip -qq android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip -d ~/.android-ndk;
       fi
     fi;
     if [ "$TRAVIS_OS_NAME" == "osx" ];
@@ -68,11 +67,11 @@ install:
     npm install -g yarn@$YARN_VERSION;
     source $HOME/.cargo/env;
     rm package-lock.json;
-    yarn add metro-core;
-    yarn install;
-    yarn setup_config;
-    yarn android-bundle;
-    yarn run react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res;
+    yarn add metro-core --scripts-prepend-node-path;
+    yarn --scripts-prepend-node-path install;
+    yarn --scripts-prepend-node-path setup_config;
+    yarn --scripts-prepend-node-path android-bundle;
+    yarn --scripts-prepend-node-path run react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res;
     rm -rf node_modules/react-native-cardano/rust/target;
     curl -O https://s3.amazonaws.com/yoroi-backups/target.zip;
     unzip -a target.zip -d node_modules/react-native-cardano/rust/;
