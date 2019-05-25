@@ -1,0 +1,199 @@
+#language: bash
+sudo: true
+dist: xenial
+
+os:
+  - linux
+  - osx
+
+language: android
+
+node_js: '10'
+services:
+  - docker
+
+before_cache:
+  - rm -f  ~/.gradle/caches/modules-2/modules-2.lock
+  - rm -rf ~/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - ~/.npm # cache npm's cache
+    - ~/.cargo # cache cargo's cache
+    - ~/.android-ndk
+    - node_modules
+    # https://docs.travis-ci.com/user/languages/android/#caching
+    - ~/.gradle/caches/
+    - ~/.gradle/wrapper/
+    - ~/.android/build-cache
+    # cache built artifacts
+    - app/build/outputs
+ 
+env:
+  global:
+    # runtime versions
+    - RUST_VERSION=1.32.0
+    - ANDROID_NDK_VERSION=r17b
+    # misc
+    - GITHUB_USERNAME=rnd-at-emurgo
+    - GITHUB_EMAIL=rnd@emurgo.io
+    - GIT_SHORT_COMMIT=${TRAVIS_COMMIT:0:7}
+    - CARDANO_NETWORK=mainnet
+    - DISPLAY=:0
+
+before_install:
+  - >
+    if [ ! -e "${HOME}/.android-ndk/${ANDROID_NDK_VERSION}" ];
+    then
+      wget https://dl.google.com/android/repository/android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip;
+      unzip -qq android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip;
+      rm -f ~/.android-ndk;
+      mv android-ndk-${ANDROID_NDK_VERSION} ${HOME}/.android-ndk/${ANDROID_NDK_VERSION};
+    fi
+  - >
+    if [ ! -e "$HOME/.cargo/bin" ];
+    then
+      curl https://sh.rustup.rs -sSf | sh -s -- -y;
+      sudo ln -fs $HOME/.cargo/bin/* /usr/local/bin/;
+      rustup install ${RUST_VERSION};
+      rustup target add wasm32-unknown-unknown --toolchain ${RUST_VERSION}
+    fi;
+    sudo ln -fs $HOME/.cargo/bin/* /usr/local/bin/;
+
+
+before_script:
+  - >
+    export ANDROID_NDK_HOME=${HOME}/.android-ndk/${ANDROID_NDK_VERSION};
+    export LOCAL_ANDROID_NDK_HOME="$ANDROID_NDK_HOME";
+    export LOCAL_ANDROID_NDK_HOST_PLATFORM="linux-x86_64";
+    export PATH=$PATH:${ANDROID_NDK_HOME};
+
+install: 
+  - >
+    rm package-lock.json;
+    yarn add metro-core;
+    yarn install;
+    yarn setup_config;
+    yarn android-bundle;
+    yarn run react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res;
+    rm -rf node_modules/react-native-cardano/rust/target;
+    curl -O https://s3.amazonaws.com/yoroi-backups/target.zip;
+    unzip -a target.zip -d node_modules/react-native-cardano/rust/;
+    if [ ! -d "node_modules/react-native/third-party" ];
+    then
+      cd node_modules/react-native;
+      ./scripts/ios-install-third-party.sh;
+      cd $OLDPWD;
+      cd node_modules/react-native/third-party/glog-0.3.5/;
+      make distclean;
+      ./configure;
+      cd $OLDPWD;
+    fi;
+    echo "sdk.dir=${ANDROID_HOME}" >> android/local.properties;
+    echo "MYAPP_RELEASE_STORE_PASSWORD=lalala" >> android/gradle.properties.local;
+    echo "YAPP_RELEASE_KEY_PASSWORD=lalala" >> android/gradle.properties.local;
+  - |
+    cat > app/google-services.json <<EOF
+    {
+      "project_info": {
+        "project_id": "mockproject-1234",
+        "project_number": "123456789000",
+        "name": "FirebaseQuickstarts",
+        "firebase_url": "https://mockproject-1234.firebaseio.com"
+      },
+      "client": [
+        {
+          "client_info": {
+            "mobilesdk_app_id": "1:123456789000:android:f1bf012572b04063",
+            "client_id": "android:com.google.samples.quickstart.admobexample",
+            "client_type": 1,
+            "android_client_info": {
+              "package_name": "com.emurgo",
+              "certificate_hash": []
+            }
+          },
+          "oauth_client": [
+            {
+              "client_id": "123456789000-hjugbg6ud799v4c49dim8ce2usclthar.apps.googleusercontent.com",
+              "client_type": 1,
+              "android_info": { 
+                "package_name": "com.emurgo",
+                "certificate_hash": "4C20644DE36B8F89D25650C7D1FF9FBAE650FDF7"
+              }
+            },
+            {
+              "client_id": "123456789000-e4uksm38sne0bqrj6uvkbo4oiu4hvigl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ],
+          "api_key": [
+            {
+              "current_key": "AIzbSzCn1N6LWIe6wthYyrgUUSAlUsdqMb-wvTo"
+            }
+          ],
+          "services": {
+            "analytics_service": {
+              "status": 1
+            },
+            "cloud_messaging_service": {
+              "status": 2,
+              "apns_config": []
+            },
+            "appinvite_service": {
+              "status": 2,
+              "other_platform_oauth_client": [
+                {
+                  "client_id": "123456789000-e4uksm38sne0bqrj6uvkbo4oiu4hvigl.apps.googleusercontent.com",
+                  "client_type": 3
+                }
+              ]
+            },
+            "google_signin_service": {
+              "status": 2
+            },
+            "ads_service": {
+              "status": 2,
+              "test_banner_ad_unit_id": "ca-app-pub-3940256099942544/6300978111",
+              "test_interstitial_ad_unit_id": "ca-app-pub-3940256099942544/1033173712"
+            }
+          }
+        }
+      ],
+      "client_info": [],
+      "ARTIFACT_VERSION": "1"
+    }
+    EOF
+
+_build_yoroi_script:
+  script: &_build_yoroi_script
+    - >
+      set -xeo pipefail;
+      ./gradlew ":app:assembleMainDebug";
+      ls -hl;
+
+stages:
+  - build-yoroi
+  - deploy-artifacts
+#  - build-docker
+
+matrix:
+  fast_finish: true
+  include:
+
+    - stage: build-yoroi
+      #if: branch = master
+      name: "build Yoroi extension"
+      script: *_build_yoroi_script
+
+    #- stage: build-docker
+    #  script: false
+
+  allow_failures:
+    - stage: build-docker
+
+notifications:
+  slack:
+    on_success: always
+    on_failure: always
+    rooms:
+      # notify rcmorano
+      - secure: uLazaQzraN0KlITJo3LiZ+eNP8UPuoLrtk2m7KWQPaqx2pUlBwAQKh7aSVj+QfnXUa4nQ6Q4HPq2P6j08GhD4b5vGjs7bmPk8ro2mnX/ECfgqfuon1CpvvD856DRJB1NlzI0BTlZlTLZ24TfvYFBB4CF5rh+Fe0DESNqqpwbLwOzQMms21I8VM/oFxOx+d4Uu7/rthIk0juxjS1DPLm+Owk761+MzQRq0XQYpsZpvE2w7ESJzpMjp8qTFKbNwJXbiel0ITNRzhzGVVKTNCNPnnbFSy2Ol6/6aLetLOnMQI1S+VZhUifigvcA9Pov9V6BHYk9+mCrsK93XavTwxSYUNenIf2zmIxkHzz0+EV9DXCysFNyxNq8QqOfwfDLHsfnKd2OsbJ/T5XuciHdizK04Fbp4hUl7HewUn7ywm0p8d+27Ddlrbxy5fdTOu+2YvivOpN5le200Xyhoa8u7fP9AhiRDdPCfor8KCbDRDjmZXTPlJFB8FoSs7bAOUQRuTvZqkI7E0BYrXEbGBwL3WANEb0HFECxg22Nxgx5wV4/owyX+iKN2MXLjKQnSUYCUhbu1xPhztd6jScMoNY0yirKVVbn3z6uuOJs3sk+MM5BrPY1PLtDj8cMqYHAGjsgvSRLFsKkwRQsmulrSyJAVY9z8AVmv3CSf6X9LQVCJKjY8SY=
