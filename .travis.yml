@@ -2,16 +2,18 @@ sudo: true
 
 node_js: '10'
 language: android
-#android:
-#  components:
+android:
+  components:
+#    - android-21
 #    - build-tools-28.0.3
-#    - android-28
+    - build-tools-21.1.2
+    - android-21
 #    - add-on
 #    - extra
-#  licenses:
-#    - 'android-sdk-preview-license-52d11cd2'
-#    - 'android-sdk-license-.+'
-#    - 'google-gdk-license-.+'
+  licenses:
+    - 'android-sdk-preview-.+'
+    - 'android-sdk-license-.+'
+    - 'google-gdk-license-.+'
 
 services:
   - docker
@@ -46,17 +48,19 @@ env:
 
 before_install:
   - >
-    echo ${ANDROID_HOME};
     export ANDROID_NDK_HOME=${HOME}/.android-ndk/${ANDROID_NDK_VERSION};
     export LOCAL_ANDROID_NDK_HOME="$ANDROID_NDK_HOME";
     export LOCAL_ANDROID_NDK_HOST_PLATFORM="linux-x86_64";
     export PATH=$PATH:${ANDROID_NDK_HOME};
   - >
+    set -x;
+    echo ${ANDROID_HOME};
+    echo ${ANDROID_NDK_HOME};
     if [ ! -e "${ANDROID_NDK_HOME}" ];
     then
       wget https://dl.google.com/android/repository/android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip;
       pwd; ls -hl;
-      rm -rf ~/.android-ndk;
+      rm -rf ~/.android-ndk; mkdir ~/.android-ndk;
       unzip -qq android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip;
       mv android-ndk-${ANDROID_NDK_VERSION} ${ANDROID_NDK_HOME};
     fi
