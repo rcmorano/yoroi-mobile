@@ -46,12 +46,18 @@ env:
 
 before_install:
   - >
-    if [ ! -e "${HOME}/.android-ndk/${ANDROID_NDK_VERSION}" ];
+    echo ${ANDROID_HOME};
+    export ANDROID_NDK_HOME=${HOME}/.android-ndk/${ANDROID_NDK_VERSION};
+    export LOCAL_ANDROID_NDK_HOME="$ANDROID_NDK_HOME";
+    export LOCAL_ANDROID_NDK_HOST_PLATFORM="linux-x86_64";
+    export PATH=$PATH:${ANDROID_NDK_HOME};
+  - >
+    if [ ! -e "${ANDROID_NDK_HOME}" ];
     then
       wget https://dl.google.com/android/repository/android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip;
       unzip -qq android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip;
       rm -f ~/.android-ndk;
-      mv android-ndk-${ANDROID_NDK_VERSION} ${HOME}/.android-ndk/${ANDROID_NDK_VERSION};
+      mv android-ndk-${ANDROID_NDK_VERSION} ${ANDROID_NDK_HOME};
     fi
   - >
     set -x;
@@ -62,18 +68,11 @@ before_install:
       rustup install ${RUST_VERSION};
       rustup target add wasm32-unknown-unknown --toolchain ${RUST_VERSION}
     fi;
-    sudo ln -nfs $HOME/.cargo/bin/* /usr/local/bin/;
 
-
-before_script:
-  - >
-    export ANDROID_NDK_HOME=${HOME}/.android-ndk/${ANDROID_NDK_VERSION};
-    export LOCAL_ANDROID_NDK_HOME="$ANDROID_NDK_HOME";
-    export LOCAL_ANDROID_NDK_HOST_PLATFORM="linux-x86_64";
-    export PATH=$PATH:${ANDROID_NDK_HOME};
 
 install: 
   - >
+    source $HOME/.cargo/env;
     rm package-lock.json;
     yarn add metro-core;
     yarn install;
@@ -194,12 +193,12 @@ matrix:
     - stage: build-yoroi
       os: linux
       dist: xenial
-      name: "build Yoroi app"
+      name: "build Yoroi app (Android)"
       script: *_build_yoroi_script
 
     - stage: build-yoroi
       os: osx
-      name: "build Yoroi app"
+      name: "build Yoroi app (iOS)"
       script: *_build_yoroi_script
 
     #- stage: build-docker
