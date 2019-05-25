@@ -66,8 +66,8 @@ install:
   - >
     npm install -g yarn@$YARN_VERSION;
     source $HOME/.cargo/env;
-    rm package-lock.json;
-    yarn add metro-core --scripts-prepend-node-path;
+    rm -f package-lock.json;
+    yarn --scripts-prepend-node-path add metro-core;
     yarn --scripts-prepend-node-path install;
     yarn --scripts-prepend-node-path setup_config;
     yarn --scripts-prepend-node-path android-bundle;
@@ -196,9 +196,8 @@ matrix:
       #    - add-on
       #    - extra
         licenses:
-          - 'android-sdk-preview-.+'
-          - 'android-sdk-license-.+'
-          - 'google-gdk-license-.+'
+          - 'android-.*'
+          - 'google-.*'
       name: "build Yoroi app (Android)"
       script: *_build_yoroi_script
 
