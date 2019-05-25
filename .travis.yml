@@ -55,8 +55,9 @@ before_install:
     if [ ! -e "${ANDROID_NDK_HOME}" ];
     then
       wget https://dl.google.com/android/repository/android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip;
-      unzip -qq android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip;
+      pwd; ls -hl;
       rm -f ~/.android-ndk;
+      unzip -qq android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip;
       mv android-ndk-${ANDROID_NDK_VERSION} ${ANDROID_NDK_HOME};
     fi
   - >
