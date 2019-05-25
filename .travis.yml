@@ -5,9 +5,10 @@ before_cache:
   - rm -rf ~/.gradle/caches/*/plugin-resolution/
 cache:
   directories:
-    - ~/.npm # cache npm's cache
-    - ~/.nvm # cache npm's cache
-    - ~/.cargo # cache cargo's cache
+    - ~/.npm
+    - ~/.nvm
+    - ~/.cache/yarn
+    - ~/.cargo
     - ~/.android-ndk
     - node_modules
     # https://docs.travis-ci.com/user/languages/android/#caching
@@ -67,11 +68,12 @@ install:
     npm install -g yarn@$YARN_VERSION;
     source $HOME/.cargo/env;
     rm -f package-lock.json;
-    yarn --scripts-prepend-node-path add metro-core;
-    yarn --scripts-prepend-node-path install;
-    yarn --scripts-prepend-node-path setup_config;
-    yarn --scripts-prepend-node-path android-bundle;
-    yarn --scripts-prepend-node-path run react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res;
+    echo "scripts-prepend-node-path=true" >> .npmrc;
+    yarn add metro-core;
+    yarn install;
+    yarn setup_config;
+    yarn android-bundle;
+    yarn run react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res;
     rm -rf node_modules/react-native-cardano/rust/target;
     curl -O https://s3.amazonaws.com/yoroi-backups/target.zip;
     unzip -a target.zip -d node_modules/react-native-cardano/rust/;
