@@ -1,10 +1,5 @@
 sudo: true
 
-os:
-  - linux
-  - osx
-dist: xenial
-
 node_js: '10'
 language: android
 android:
@@ -62,8 +57,7 @@ before_install:
     if [ ! -e "$HOME/.cargo/bin" ];
     then
       curl https://sh.rustup.rs -sSf | sh -s -- -y;
-      sudo ln -fs $HOME/.cargo/bin/* /usr/local/bin/;
-      PATH=$PATH:/usr/local/bin;
+      source $HOME/.cargo/env;
       rustup install ${RUST_VERSION};
       rustup target add wasm32-unknown-unknown --toolchain ${RUST_VERSION}
     fi;
@@ -177,8 +171,15 @@ _build_yoroi_script:
   script: &_build_yoroi_script
     - >
       set -xeo pipefail;
-      ./gradlew ":app:assembleMainDebug";
-      ls -hl;
+      if [ "$TRAVIS_OS_NAME" == "osx" ];
+      then
+        echo "null"; 
+      fi;
+      if [ "$TRAVIS_OS_NAME" == "linux" ];
+      then
+        ./gradlew ":app:assembleMainDebug";
+        ls -hl;
+      fi
 
 stages:
   - build-yoroi
@@ -190,8 +191,11 @@ matrix:
   include:
 
     - stage: build-yoroi
-      #if: branch = master
-      name: "build Yoroi extension"
+      os:
+        - linux
+        - osx
+      dist: xenial
+      name: "build Yoroi app"
       script: *_build_yoroi_script
 
     #- stage: build-docker
