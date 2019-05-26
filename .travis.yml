@@ -56,7 +56,8 @@ before_install:
       if [ ! -e "${ANDROID_HOME}/bin" ];
       then
         curl -o android-sdk.zip https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip; 
-        unzip -qq android-sdk.zip -d ${HOME};
+        mkdir ${ANDROID_HOME};
+        unzip -qq android-sdk.zip -d ${ANDROID_HOME};
         rm android-sdk.zip;
       fi;
       if [ ! -e "${ANDROID_NDK_HOME}" ];
