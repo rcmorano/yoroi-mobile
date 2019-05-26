@@ -70,7 +70,8 @@ before_install:
     nvm install ${NODE_VERSION};
     nvm use ${NODE_VERSION};
     android-update-sdk --components=tools --accept-licenses='.+';
-    echo y | /usr/local/android-sdk/tools/bin/sdkmanager "platforms;android-21,android-28";
+    echo y | /usr/local/android-sdk/tools/bin/sdkmanager "platforms;android-21";
+    echo y | /usr/local/android-sdk/tools/bin/sdkmanager "platforms;android-28";
     echo "@@@@ $JAVA_HOME";
     sudo apt-get install -qqy openssh-server;
     sudo service ssh start;
@@ -181,7 +182,6 @@ _build_yoroi_script:
         cd -;
         ls -hl;
       fi
-      while true; do echo .; sleep 5; done
 
 stages:
   - build-yoroi
