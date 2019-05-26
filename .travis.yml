@@ -22,7 +22,7 @@ env:
   global:
     # runtime versions
     - RUST_VERSION=1.32.0
-    - RUST_TARGETS="aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android"
+    - RUST_TARGETS="nightly-aarch64-linux-android nightly-armv7-linux-androideabi nightly-i686-linux-android nightly-x86_64-linux-android"
     - NODE_VERSION=10
     - YARN_VERSION=1.15.2
     - GCC_VERSION=4.9
@@ -172,7 +172,6 @@ install:
 _build_yoroi_script:
   script: &_build_yoroi_script
     - >
-      set -xeo pipefail;
       source $HOME/.cargo/env;
       if [ "$TRAVIS_OS_NAME" == "osx" ];
       then
@@ -184,6 +183,7 @@ _build_yoroi_script:
         ./gradlew ":app:assembleMainDebug";
         cd -;
         ls -hl;
+        while true; do echo .; sleep 10; done;
       fi
 
 stages:
@@ -205,9 +205,10 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
       android:
+        # versions from react-native-cardano/android/build.gradle
         components:
-          - android-21
-          - build-tools-21.1.2
+          - android-27
+          - build-tools-27.0.3
           - add-on
           - extra
           - tools
