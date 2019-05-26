@@ -50,12 +50,12 @@ before_install:
       if [ ! -e "${ANDROID_NDK_HOME}" ];
       then
         wget https://dl.google.com/android/repository/android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip;
-        pwd; ls -hl;
         rm -rf ~/.android-ndk; mkdir -p ~/.android-ndk;
         unzip -qq android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip -d ~/.android-ndk;
         rm -f *zip;
       fi
-      sudo apt-get remove -y gcc*4.6*;
+      dpkg -l | grep gcc;
+      sudo apt-get remove -y gcc-4.6;
     fi;
     if [ "$TRAVIS_OS_NAME" == "osx" ];
     then
@@ -63,7 +63,8 @@ before_install:
     fi;
     nvm install ${NODE_VERSION};
     nvm use ${NODE_VERSION};
-    yes | sdkmanager --licenses;
+    SDK_MANAGER=$(find /|grep bin/sdkmanager$);
+    yes | $SDK_MANAGER --licenses;
     gcc --version;
 
 
