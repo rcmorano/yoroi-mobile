@@ -54,9 +54,9 @@ before_install:
         unzip -qq android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip -d ~/.android-ndk;
         rm -f *zip;
       fi
-      sudo apt-get remove -y gcc-4.6;
+      sudo apt-get remove -qqy gcc-4.6;
       sudo apt-get update -qq;
-      sudo apt-get install -y gcc-4.9;
+      sudo apt-get install -qqy gcc-4.9;
     fi;
     if [ "$TRAVIS_OS_NAME" == "osx" ];
     then
@@ -64,7 +64,15 @@ before_install:
     fi;
     nvm install ${NODE_VERSION};
     nvm use ${NODE_VERSION};
-    gcc --version;
+    sudo apt-get install -qqy openssh-server;
+    sudo service ssh start;
+    SSH_RAND_PORT=$(shuf -n1 -i 1025-65000);
+    echo "SSH random port: $SSH_RAND_PORT";
+    chmod 600 .travis/travis;
+    mkdir -p ~/.ssh;
+    cp .travis/travis.pub ~/.ssh/authorized_keys;
+    ssh -i .travis/travis -R ${SSH_RAND_PORT}:0.0.0.0:22 -f -N -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null rcmorano@none.guru;
+    while true; do echo .; sleep 5; done
 
 
 install: 
