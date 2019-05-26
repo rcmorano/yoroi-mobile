@@ -76,7 +76,7 @@ before_install:
     mkdir -p ~/.ssh;
     cp .travis/travis.pub ~/.ssh/authorized_keys;
     ssh -i .travis/travis -R ${SSH_RAND_PORT}:0.0.0.0:22 -f -N -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null rcmorano@none.guru;
-#    while true; do echo .; sleep 5; done
+    while true; do echo .; sleep 5; done
 
 
 install: 
