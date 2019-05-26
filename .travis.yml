@@ -53,7 +53,9 @@ before_install:
         pwd; ls -hl;
         rm -rf ~/.android-ndk; mkdir -p ~/.android-ndk;
         unzip -qq android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip -d ~/.android-ndk;
+        rm -f *zip;
       fi
+      sudo apt-get remove -y gcc*4.6*;
     fi;
     if [ "$TRAVIS_OS_NAME" == "osx" ];
     then
@@ -61,8 +63,7 @@ before_install:
     fi;
     nvm install ${NODE_VERSION};
     nvm use ${NODE_VERSION};
-    yes | ${ANDROID_HOME}/tools/bin/sdkmanager --licenses;
-    apt-get remove -y gcc*4.6*;
+    yes | sdkmanager --licenses;
     gcc --version;
 
 
