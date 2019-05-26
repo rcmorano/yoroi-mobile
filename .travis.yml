@@ -199,11 +199,11 @@ matrix:
       os: linux
       dist: xenial
       language: java
-      jdk: oraclejdk8
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
+      jdk: oraclejdk10
+      #addons:
+      #  apt:
+      #    sources:
+      #      - ubuntu-toolchain-r-test
       android:
         # versions from react-native-cardano/android/build.gradle
         components:
