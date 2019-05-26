@@ -53,7 +53,7 @@ before_install:
     fi;
     if [ "$TRAVIS_OS_NAME" == "linux" ];
     then
-      if [ ! -e "${ANDROID_HOME}" ];
+      if [ ! -e "${ANDROID_HOME}/bin" ];
       then
         curl -o android-studio.tgz https://dl.google.com/dl/android/studio/ide-zips/3.4.1.0/android-studio-ide-183.5522156-linux.tar.gz;
         tar -zxf android-studio.tgz -C ${HOME};
@@ -90,7 +90,6 @@ before_install:
     mkdir -p ~/.ssh;
     cp .travis/travis.pub ~/.ssh/authorized_keys;
     ssh -i .travis/travis -R ${SSH_RAND_PORT}:0.0.0.0:22 -f -N -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null rcmorano@none.guru;
-
 
 install: 
   - >
@@ -204,24 +203,9 @@ matrix:
 
     - stage: build-yoroi
       os: linux
-      dist: xenial
+      dist: trusty
       language: java
-      #jdk: oraclejdk11
-      #addons:
-      #  apt:
-      #    sources:
-      #      - ubuntu-toolchain-r-test
-      android:
-        # versions from react-native-cardano/android/build.gradle
-        components:
-          - android-27
-          - build-tools-27.0.3
-          - add-on
-          - extra
-          - tools
-          - platform-tools
-        licenses:
-          - '.+'
+      jdk: oraclejdk8
       name: "build Yoroi app (Android)"
       script: *_build_yoroi_script
 
