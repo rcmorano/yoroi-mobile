@@ -54,8 +54,8 @@ before_install:
         unzip -qq android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip -d ~/.android-ndk;
         rm -f *zip;
       fi
-      dpkg -l | grep gcc;
       sudo apt-get remove -y gcc-4.6;
+      sudo apt-get install -y build-essential g++4.9;
     fi;
     if [ "$TRAVIS_OS_NAME" == "osx" ];
     then
@@ -63,8 +63,7 @@ before_install:
     fi;
     nvm install ${NODE_VERSION};
     nvm use ${NODE_VERSION};
-    SDK_MANAGER=$(find /|grep bin/sdkmanager$);
-    yes | $SDK_MANAGER --licenses;
+    yes | sdkmanager --licenses;
     gcc --version;
 
 
@@ -185,17 +184,15 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-          packages:
-            - g++-4.9
       android:
         components:
           - android-28
           - build-tools-28.0.3
-      #    - add-on
-      #    - extra
+          - add-on
+          - extra
         licenses:
-          - 'android-.*'
-          - 'google-.*'
+          - 'android-.+'
+          - 'google-.+'
       name: "build Yoroi app (Android)"
       script: *_build_yoroi_script
 
