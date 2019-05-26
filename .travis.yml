@@ -173,6 +173,7 @@ _build_yoroi_script:
   script: &_build_yoroi_script
     - >
       set -xeo pipefail;
+      source $HOME/.cargo/env;
       if [ "$TRAVIS_OS_NAME" == "osx" ];
       then
         echo "null"; 
