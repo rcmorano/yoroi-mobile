@@ -115,8 +115,7 @@ _build_yoroi_script:
         cd android;
         ./gradlew ":app:assembleMainDebug";
         cd -;
-        ls -hl;
-        while true; do echo .; sleep 10; done;
+        ls -hl app/build/outputs/apk/main/debug/;
       fi
 
 stages:
