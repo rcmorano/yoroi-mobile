@@ -54,6 +54,7 @@ before_install:
     then
       if [ ! -e "${ANDROID_HOME}/bin" ];
       then
+        echo "Installing android-sdk...";
         curl -o android-sdk.zip https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip; 
         mkdir -p ${ANDROID_HOME};
         unzip -qq android-sdk.zip -d ${ANDROID_HOME};
@@ -61,6 +62,7 @@ before_install:
       fi;
       if [ ! -e "${ANDROID_NDK_HOME}" ];
       then
+        echo "Installing android-ndk...";
         curl -o android-ndk.zip https://dl.google.com/android/repository/android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip;
         rm -rf ~/android-ndk; mkdir -p ~/android-ndk;
         unzip -qq android-ndk.zip -d ~/android-ndk;
@@ -72,6 +74,7 @@ before_install:
       echo "dunno yet";
     fi;
     nvm install ${NODE_VERSION};
+    echo "Installing android tools...";
     yes | sdkmanager "emulator" "tools" "platform-tools" &> /dev/null;
     yes | sdkmanager "platforms;android-${ANDROID_SDK_VERSION}" &> /dev/null;
     yes | sdkmanager "build-tools;${ANDROID_BUILD_TOOLS_VERSION}" &> /dev/null;
@@ -167,7 +170,7 @@ install:
       "client_info": [],
       "ARTIFACT_VERSION": "1"
     }
-    EOF
+EOF
 
 _build_yoroi_script:
   script: &_build_yoroi_script
