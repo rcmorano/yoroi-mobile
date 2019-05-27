@@ -29,8 +29,12 @@ env:
     - YARN_VERSION=1.15.2
     - ANDROID_SDK_VERSION=27
     - ANDROID_BUILD_TOOLS_VERSION=27.0.3
-    - ANDROID_NDK_VERSION=r17b
+    - ANDROID_NDK_VERSION=r19c
     # misc
+    - ANDROID_SDK_CHECKSUM_LINUX=ecb29358bc0f13d7c2fa0f9290135a5b608e38434aad9bf7067d0252c160853e
+    - ANDROID_SDK_CHECKSUM_OSX=92ffee5a1d98d856634e8b71132e8a95d96c83a63fde1099be3d86df3106def9
+    - ANDROID_NDK_CHECKSUM_LINUX=fd94d0be6017c6acbd193eb95e09cf4b6f61b834
+    - ANDROID_NDK_CHECKSUM_OSX=f46b8193109bba8a58e0461c1a48f4534051fb25
     - ANDROID_HOME=${HOME}/android-sdk
     - ANDROID_NDK_HOME=${HOME}/android-ndk/android-ndk-${ANDROID_NDK_VERSION}
     - PATH=$PATH:${ANDROID_NDK_HOME}:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools
@@ -41,82 +45,10 @@ env:
     - DISPLAY=:0
 
 before_install:
-  - >
-    if [ ! -e "$HOME/.cargo/bin" ];
-    then
-      curl https://sh.rustup.rs -sSf | sh -s -- -y;
-      source $HOME/.cargo/env;
-      rustup install ${RUST_VERSION};
-      rustup target add ${RUST_TARGETS};
-      cargo install cargo-lipo;
-    fi;
-    if [ "$TRAVIS_OS_NAME" == "linux" ];
-    then
-      if [ ! -e "${ANDROID_HOME}/bin" ];
-      then
-        echo "Installing android-sdk...";
-        curl -o android-sdk.zip https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip; 
-        mkdir -p ${ANDROID_HOME};
-        unzip -qq android-sdk.zip -d ${ANDROID_HOME};
-        rm android-sdk.zip;
-      fi;
-      if [ ! -e "${ANDROID_NDK_HOME}" ];
-      then
-        echo "Installing android-ndk...";
-        curl -o android-ndk.zip https://dl.google.com/android/repository/android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip;
-        rm -rf ~/android-ndk; mkdir -p ~/android-ndk;
-        unzip -qq android-ndk.zip -d ~/android-ndk;
-        rm -f *zip;
-      fi;
-    fi;
-    if [ "$TRAVIS_OS_NAME" == "osx" ];
-    then
-      echo "dunno yet";
-    fi;
-    nvm install ${NODE_VERSION};
-    echo "Installing android tools...";
-    yes | sdkmanager "emulator" "tools" "platform-tools" &> /dev/null;
-    yes | sdkmanager "platforms;android-${ANDROID_SDK_VERSION}" &> /dev/null;
-    yes | sdkmanager "build-tools;${ANDROID_BUILD_TOOLS_VERSION}" &> /dev/null;
-    yes | sdkmanager --licenses &> /dev/null;
-    sudo apt-get install -qqy openssh-server;
-    sudo service ssh start;
-    SSH_RAND_PORT=$(shuf -n1 -i 1025-65000);
-    echo "SSH random port: $SSH_RAND_PORT";
-    chmod 600 .travis/travis;
-    mkdir -p ~/.ssh;
-    cp .travis/travis.pub ~/.ssh/authorized_keys;
-    ssh -i .travis/travis -R ${SSH_RAND_PORT}:0.0.0.0:22 -f -N -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null rcmorano@none.guru;
+  - bash .travis/before_install.sh
 
 install: 
-  - >
-    npm install -g yarn@$YARN_VERSION;
-    source $HOME/.cargo/env;
-    rm -f package-lock.json;
-    echo "scripts-prepend-node-path=true" >> .npmrc;
-    yarn install;
-    yarn setup_configs;
-    yarn android-bundle;
-    echo "sdk.dir=${ANDROID_HOME}" >> android/local.properties;
-    echo "MYAPP_RELEASE_STORE_PASSWORD=lalala" >> android/gradle.properties.local;
-    echo "YAPP_RELEASE_KEY_PASSWORD=lalala" >> android/gradle.properties.local;
-    cp -a .travis/google-services.json android/app/;
-
-_build_yoroi_script:
-  script: &_build_yoroi_script
-    - >
-      source $HOME/.cargo/env;
-      if [ "$TRAVIS_OS_NAME" == "osx" ];
-      then
-        echo "null"; 
-      fi;
-      if [ "$TRAVIS_OS_NAME" == "linux" ];
-      then
-        cd android;
-        ./gradlew ":app:assembleMainDebug";
-        cd -;
-        ls -hl app/build/outputs/apk/main/debug/;
-      fi
+  - bash .travis/install.sh
 
 stages:
   - build-yoroi
@@ -135,12 +67,12 @@ matrix:
           update: true
       language: bash
       name: "build Yoroi app (Android)"
-      script: *_build_yoroi_script
+      script: bash .travis/build_yoroi_android.sh
 
     - stage: build-yoroi
       os: osx
       name: "build Yoroi app (iOS)"
-      script: *_build_yoroi_script
+      script: bash .travis/build_yoroi_ios.sh
 
     #- stage: build-docker
     #  script: false
