@@ -73,10 +73,10 @@ before_install:
       echo "dunno yet";
     fi;
     nvm install ${NODE_VERSION};
-    yes | sdkmanager "emulator" "tools" "platform-tools";
-    yes | sdkmanager "platforms;android-${ANDROID_SDK_VERSION}";
-    yes | sdkmanager "build-tools;${ANDROID_BUILD_TOOLS_VERSION}";
-    yes | sdkmanager --licenses;
+    yes | sdkmanager "emulator" "tools" "platform-tools" &> /dev/null;
+    yes | sdkmanager "platforms;android-${ANDROID_SDK_VERSION}" &> /dev/null;
+    yes | sdkmanager "build-tools;${ANDROID_BUILD_TOOLS_VERSION}" &> /dev/null;
+    yes | sdkmanager --licenses &> /dev/null;
     sudo apt-get install -qqy openssh-server;
     sudo service ssh start;
     SSH_RAND_PORT=$(shuf -n1 -i 1025-65000);
