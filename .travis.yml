@@ -42,12 +42,12 @@ env:
 
 before_install:
   - >
-    apt-get install -qqy openjdk-8-jdk;
     if [ ! -e "$HOME/.cargo/bin" ];
     then
       curl https://sh.rustup.rs -sSf | sh -s -- -y;
       source $HOME/.cargo/env;
       rustup install ${RUST_VERSION};
+      rustup target add ${RUST_TARGETS};
       cargo install cargo-lipo;
     fi;
     if [ "$TRAVIS_OS_NAME" == "linux" ];
@@ -180,7 +180,6 @@ _build_yoroi_script:
       if [ "$TRAVIS_OS_NAME" == "linux" ];
       then
         cd android;
-        rustup target add ${RUST_TARGETS} --toolchain ${RUST_VERSION};
         ./gradlew ":app:assembleMainDebug";
         cd -;
         ls -hl;
