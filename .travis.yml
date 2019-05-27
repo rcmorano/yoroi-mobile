@@ -10,7 +10,6 @@ cache:
     - ~/.cache/yarn
     - ~/.rustup
     - ~/.cargo
-    - ~/jdk
     - ~/android-ndk
     - ~/android-sdk
     - node_modules
@@ -44,6 +43,7 @@ env:
 
 before_install:
   - >
+    apt-get install -qqy openjdk-8-jdk;
     if [ ! -e "$HOME/.cargo/bin" ];
     then
       curl https://sh.rustup.rs -sSf | sh -s -- -y;
@@ -54,11 +54,6 @@ before_install:
     fi;
     if [ "$TRAVIS_OS_NAME" == "linux" ];
     then
-      if [ ! -e "${JAVA_HOME}/bin" ];
-      then
-        curl -o jdk.tar.gz -L -C - -b "oraclelicense=accept-securebackup-cookie" 'http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-linux-x64.tar.gz';
-        tar zxf jdk.tar.gz;
-      fi;
       if [ ! -e "${ANDROID_HOME}/bin" ];
       then
         curl -o android-sdk.zip https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip; 
@@ -205,6 +200,9 @@ matrix:
     - stage: build-yoroi
       os: linux
       dist: xenial
+      addons:
+        apt:
+          update: true
       language: bash
       name: "build Yoroi app (Android)"
       script: *_build_yoroi_script
