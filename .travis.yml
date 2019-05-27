@@ -31,7 +31,6 @@ env:
     - ANDROID_BUILD_TOOLS_VERSION=27.0.3
     - ANDROID_NDK_VERSION=r17b
     # misc
-    - JAVA_HOME=${HOME}/jdk
     - ANDROID_HOME=${HOME}/android-sdk
     - ANDROID_NDK_HOME=${HOME}/android-ndk/android-ndk-${ANDROID_NDK_VERSION}
     - PATH=$PATH:${ANDROID_NDK_HOME}:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools
@@ -57,7 +56,7 @@ before_install:
       if [ ! -e "${ANDROID_HOME}/bin" ];
       then
         curl -o android-sdk.zip https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip; 
-        mkdir ${ANDROID_HOME};
+        mkdir -p ${ANDROID_HOME};
         unzip -qq android-sdk.zip -d ${ANDROID_HOME};
         rm android-sdk.zip;
       fi;
