@@ -100,7 +100,7 @@ install:
     echo "sdk.dir=${ANDROID_HOME}" >> android/local.properties;
     echo "MYAPP_RELEASE_STORE_PASSWORD=lalala" >> android/gradle.properties.local;
     echo "YAPP_RELEASE_KEY_PASSWORD=lalala" >> android/gradle.properties.local;
-    cp -a .travis/google-services.json app/;
+    cp -a .travis/google-services.json android/app/;
 
 _build_yoroi_script:
   script: &_build_yoroi_script
