@@ -27,7 +27,6 @@ env:
     - RUST_TARGETS="aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android"
     - NODE_VERSION=10
     - YARN_VERSION=1.15.2
-    - JAVA_VERSION=9
     - ANDROID_SDK_VERSION=27
     - ANDROID_BUILD_TOOLS_VERSION=27.0.3
     - ANDROID_NDK_VERSION=r17b
@@ -200,7 +199,7 @@ matrix:
       os: linux
       dist: xenial
       language: java
-      jdk: openjdk${JAVA_VERSION}
+      jdk: openjdk9
       name: "build Yoroi app (Android)"
       script: *_build_yoroi_script
 
