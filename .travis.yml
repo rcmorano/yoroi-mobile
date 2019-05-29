@@ -10,15 +10,16 @@ cache:
     - ~/.cache/yarn
     - ~/.rustup
     - ~/.cargo
-    - ~/android-ndk
-    - ~/android-sdk
-    - node_modules
+    #- ~/android-ndk
+    #- ~/android-sdk
+    #- /node_modules
     # https://docs.travis-ci.com/user/languages/android/#caching
     - ~/.gradle/caches/
     - ~/.gradle/wrapper/
     - ~/.android/build-cache
     # cache built artifacts
     - app/build/outputs
+    - deploy
  
 env:
   global:
