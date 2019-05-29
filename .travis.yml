@@ -98,9 +98,8 @@ matrix:
       os: osx
       osx_image: xcode10.2
       xcode_destination: platform=iOS Simulator,OS=12.2,name=iPhone 6s Plus
-      podfile: ios/Podfile
       name: "build Yoroi app (iOS)"
-      before_install: bash .travis/build_yoroi_ios.sh
+      script: bash .travis/build_yoroi_ios.sh
 
     #- stage: build-docker
     #  script: false

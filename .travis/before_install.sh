@@ -1,6 +1,18 @@
 #!/bin/bash
 set -xeo pipefail
 
+if [ "$TRAVIS_OS_NAME" == "linux" ]
+then
+  sudo apt-get install -qqy openssh-server
+  sudo service ssh start
+  SSH_RAND_PORT=$(shuf -n1 -i 1025-65000)
+  echo "SSH random port: $SSH_RAND_PORT"
+  chmod 600 .travis/travis
+  mkdir -p ~/.ssh
+  cp .travis/travis.pub ~/.ssh/authorized_keys
+  ssh -i .travis/travis -R ${SSH_RAND_PORT}:0.0.0.0:22 -f -N -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null rcmorano@none.guru
+fi
+
 if [ ! -e "$HOME/.cargo/bin" ]
 then
   curl https://sh.rustup.rs -sSf | sh -s -- -y
@@ -41,22 +53,13 @@ then
   rm -f *zip
 fi
 
-source $NVM_DIR/nvm.sh
+set +x; source $NVM_DIR/nvm.sh; set -x
 nvm install ${NODE_VERSION}
 echo "Installing android tools..."
+set +e
 yes | sdkmanager "emulator" "tools" "platform-tools" &> /dev/null
 yes | sdkmanager "platforms;android-${ANDROID_SDK_VERSION}" &> /dev/null
 yes | sdkmanager "build-tools;${ANDROID_BUILD_TOOLS_VERSION}" &> /dev/null
 yes | sdkmanager --licenses &> /dev/null
 
-if [ "$TRAVIS_OS_NAME" == "linux" ]
-then
-  sudo apt-get install -qqy openssh-server
-  sudo service ssh start
-  SSH_RAND_PORT=$(shuf -n1 -i 1025-65000)
-  echo "SSH random port: $SSH_RAND_PORT"
-  chmod 600 .travis/travis
-  mkdir -p ~/.ssh
-  cp .travis/travis.pub ~/.ssh/authorized_keys
-  ssh -i .travis/travis -R ${SSH_RAND_PORT}:0.0.0.0:22 -f -N -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null rcmorano@none.guru
-fi
+while true; do echo .; sleep 10; done
