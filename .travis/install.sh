@@ -9,6 +9,7 @@ echo "scripts-prepend-node-path=true" >> .npmrc
 if [ "$TRAVIS_OS_NAME" == "osx" ]
 then
   YARN_ARGS="--network-concurrency 1"
+  gem install --no-ri --no-rdoc xcpretty
 fi
 yarn install ${YARN_ARGS}
 yarn setup_configs
