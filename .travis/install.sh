@@ -6,7 +6,11 @@ npm install -g yarn@$YARN_VERSION
 source $HOME/.cargo/env
 rm -f package-lock.json
 echo "scripts-prepend-node-path=true" >> .npmrc
-yarn install
+if [ "$TRAVIS_OS_NAME" == "osx" ]
+then
+  YARN_ARGS="--network-concurrency 1"
+fi
+yarn install ${YARN_ARGS}
 yarn setup_configs
 yarn android-bundle
 echo "sdk.dir=${ANDROID_HOME}" >> android/local.properties
