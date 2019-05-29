@@ -54,7 +54,7 @@ then
 fi
 
 set +x; source $NVM_DIR/nvm.sh; set -x
-nvm install ${NODE_VERSION}
+set +x; nvm install ${NODE_VERSION}; set -x
 echo "Installing android tools..."
 set +e
 yes | sdkmanager "emulator" "tools" "platform-tools" &> /dev/null

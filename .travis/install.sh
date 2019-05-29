@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set +x; source $NVM_DIR/nvm.sh; set -x
-nvm use ${NODE_VERSION}
+set +x; nvm use ${NODE_VERSION}; set -x
 npm install -g yarn@$YARN_VERSION
 source $HOME/.cargo/env
 rm -f package-lock.json
