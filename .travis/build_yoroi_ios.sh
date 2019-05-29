@@ -3,8 +3,7 @@
 source $HOME/.cargo/env
 
 cd ios
-pod repo update
-pod install
+pod install --no-repo-update --verbose
 cd -
 
 if [ ! -f target.zip ]; then
