@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source $NVM_DIR/nvm.sh
+set +x; source $NVM_DIR/nvm.sh; set -x
 nvm use ${NODE_VERSION}
 npm install -g yarn@$YARN_VERSION
 source $HOME/.cargo/env
