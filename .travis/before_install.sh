@@ -26,7 +26,7 @@ if [ ! -e "${ANDROID_HOME}/bin" ]
 then
   echo "Installing android-sdk..."
   curl -o android-sdk.zip https://dl.google.com/android/repository/sdk-tools-${SDK_NAME}-4333796.zip; 
-  echo $SDK_CHECKSUM android-sdk.zip | sha1sum -c
+  echo $SDK_CHECKSUM android-sdk.zip | sha256sum -c
   mkdir -p ${ANDROID_HOME}
   unzip -qq android-sdk.zip -d ${ANDROID_HOME}
   rm android-sdk.zip
