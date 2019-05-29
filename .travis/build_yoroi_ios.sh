@@ -2,6 +2,11 @@
 
 source $HOME/.cargo/env
 
+cd ios
+pod repo update
+pod install
+cd -
+
 if [ ! -f target.zip ]; then
     # delete target folder in react-native-cardano
     rm -rf node_modules/react-native-cardano/rust/target
