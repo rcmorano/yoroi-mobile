@@ -19,3 +19,5 @@ if [ ! -d "node_modules/react-native/third-party" ]; then
 fi
 
 xcodebuild "-workspace" "ios/emurgo.xcworkspace" "-scheme" "emurgo" "-configuration" "Debug" "CODE_SIGN_IDENTITY=" "CODE_SIGNING_REQUIRED=NO" "PROVISIONING_PROFILE_SPECIFIER=" "PROVISIONING_PROFILE=" "DEVELOPMENT_TEAM=" "-destination" "id=B4953501-E313-4A8E-8012-452CEA2B4D01" "build" | xcpretty
+
+ls -hl deploy
