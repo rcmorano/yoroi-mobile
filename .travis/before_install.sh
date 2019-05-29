@@ -29,7 +29,7 @@ then
 fi
 if [ "$TRAVIS_OS_NAME" == "osx" ]
 then
-  SDK_NAME="osx"
+  SDK_NAME="darwin"
   SDK_CHECKSUM="${ANDROID_SDK_CHECKSUM_OSX}"
   NDK_CHECKSUM="${ANDROID_NDK_CHECKSUM_OSX}"
 fi
