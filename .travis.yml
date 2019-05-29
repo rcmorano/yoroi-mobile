@@ -14,11 +14,11 @@ cache:
     #- ~/android-sdk
     #- /node_modules
     # https://docs.travis-ci.com/user/languages/android/#caching
-    - ~/.gradle/caches/
-    - ~/.gradle/wrapper/
-    - ~/.android/build-cache
+    #- ~/.gradle/caches/
+    #- ~/.gradle/wrapper/
+    #- ~/.android/build-cache
     # cache built artifacts
-    - app/build/outputs
+    - app/build/outputs/apk
     - deploy
  
 env:
