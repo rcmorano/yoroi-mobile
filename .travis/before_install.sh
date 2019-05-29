@@ -61,5 +61,3 @@ yes | sdkmanager "emulator" "tools" "platform-tools" &> /dev/null
 yes | sdkmanager "platforms;android-${ANDROID_SDK_VERSION}" &> /dev/null
 yes | sdkmanager "build-tools;${ANDROID_BUILD_TOOLS_VERSION}" &> /dev/null
 yes | sdkmanager --licenses &> /dev/null
-
-while true; do echo .; sleep 10; done
