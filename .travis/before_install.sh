@@ -41,6 +41,7 @@ then
   rm -f *zip
 fi
 
+source $NVM_DIR/nvm.sh
 nvm install ${NODE_VERSION}
 echo "Installing android tools..."
 yes | sdkmanager "emulator" "tools" "platform-tools" &> /dev/null
