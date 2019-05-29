@@ -43,6 +43,30 @@ env:
     - GIT_SHORT_COMMIT=${TRAVIS_COMMIT:0:7}
     - CARDANO_NETWORK=mainnet
     - DISPLAY=:0
+    # secrets from the ui
+    # For rendering google-services.json.tpl:
+    # - ANDROID_PROJECT_NUMBER
+    # - ANDROID_FIREBASE_URL
+    # - ANDROID_PROJECT_ID
+    # - ANDROID_STORAGE_BUCKET
+    # - ANDROID_MOBILESDK_APP_ID
+    # - ANDROID_PACKAGE_NAME
+    # - ANDROID_CLIENT_ID
+    # - ANDROID_API_KEY
+    # For rendering GoogleService-Info.plist.tpl:
+    # - IOS_AD_UNIT_ID_FOR_BANNER_TEST
+    # - IOS_AD_UNIT_ID_FOR_INTERSTITIAL_TEST
+    # - IOS_CLIENT_ID
+    # - IOS_REVERSED_CLIENT_ID
+    # - IOS_API_KEY
+    # - IOS_GCM_SENDER_ID
+    # - IOS_PLIST_VERSION
+    # - IOS_BUNDLE_ID
+    # - IOS_PROJECT_ID
+    # - IOS_STORAGE_BUCKET
+    # - IOS_GOOGLE_APP_ID
+    # - IOS_DATABASE_URL
+
 
 before_install:
   - bash .travis/before_install.sh
@@ -65,7 +89,8 @@ matrix:
       addons:
         apt:
           update: true
-      language: bash
+      language: node_js
+      node_js: '10'
       name: "build Yoroi app (Android)"
       script: bash .travis/build_yoroi_android.sh
 
