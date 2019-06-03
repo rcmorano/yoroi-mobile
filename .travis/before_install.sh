@@ -3,36 +3,29 @@ set -xeo pipefail
 
 if [ "$TRAVIS_OS_NAME" == "linux" ]
 then
-  sudo apt-get install -qqy openssh-server
-  sudo service ssh start
-  SSH_RAND_PORT=$(shuf -n1 -i 1025-65000)
-  echo "SSH random port: $SSH_RAND_PORT"
-  chmod 600 .travis/travis
-  mkdir -p ~/.ssh
-  cp .travis/travis.pub ~/.ssh/authorized_keys
-  ssh -i .travis/travis -R ${SSH_RAND_PORT}:0.0.0.0:22 -f -N -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null rcmorano@none.guru
-fi
-
-if [ ! -e "$HOME/.cargo/bin" ]
-then
-  curl https://sh.rustup.rs -sSf | sh -s -- -y
-  source $HOME/.cargo/env
-  rustup install ${RUST_VERSION}
-  rustup target add ${RUST_TARGETS}
-  cargo install cargo-lipo
-fi
-if [ "$TRAVIS_OS_NAME" == "linux" ]
-then
   SDK_NAME="linux"
   SDK_CHECKSUM="${ANDROID_SDK_CHECKSUM_LINUX}"
   NDK_CHECKSUM="${ANDROID_NDK_CHECKSUM_LINUX}"
+  RUST_TARGETS="${RUST_TARGETS_ANDROID}"
 fi
 if [ "$TRAVIS_OS_NAME" == "osx" ]
 then
   SDK_NAME="darwin"
   SDK_CHECKSUM="${ANDROID_SDK_CHECKSUM_OSX}"
   NDK_CHECKSUM="${ANDROID_NDK_CHECKSUM_OSX}"
+  RUST_TARGETS="${RUST_TARGETS_IOS}"
 fi
+
+
+if [ ! -e "$HOME/.cargo/bin" ]
+then
+  curl https://sh.rustup.rs -sSf | sh -s -- -y
+fi
+source $HOME/.cargo/env
+rustup install ${RUST_VERSION}
+rustup target add ${RUST_TARGETS}
+which cargo-lip || cargo install cargo-lipo
+
 
 if [ ! -e "${ANDROID_HOME}/bin" ]
 then
