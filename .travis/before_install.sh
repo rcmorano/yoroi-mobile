@@ -24,7 +24,7 @@ fi
 source $HOME/.cargo/env
 rustup install ${RUST_VERSION}
 rustup target add ${RUST_TARGETS}
-which cargo-lip || cargo install cargo-lipo
+which cargo-lipo || cargo install cargo-lipo
 
 
 if [ ! -e "${ANDROID_HOME}/bin" ]
